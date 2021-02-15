@@ -1,26 +1,76 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from 'react'
+import { BrowserRouter, Route, NavLink, Link } from 'react-router-dom'
+import './App.css'
 
-function App() {
+const Hola = () => (
+  <h1>Hola</h1>
+)
+
+const Productos = (props) => (
+  <div>
+    <h1>Productos</h1>
+    <Link to='/productos/gamers'>Gamers</Link>
+    <Link to='/productos/hogar'>Hogar</Link>
+  </div>
+)
+
+const Home = (props) => (
+  <h1>Home</h1>
+)
+
+const ProductosCategoria = ({ match }) => {
+  console.log(match)
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>Categoria: { match.params.categoria }</h1>
     </div>
-  );
+  )
 }
 
-export default App;
+const navStyles = {
+  display: 'flex',
+  justifyContent: 'space-around'
+}
+
+const NavActive = {
+  color: 'orangered'
+}
+
+const Navegation = () => (
+  <nav style={navStyles}>
+    <NavLink
+      to='/'
+      exact
+      activeStyle={NavActive}
+    >
+      Home
+    </NavLink>
+    <NavLink
+      to='/hola'
+      activeClassName='navActive'
+    >
+      Hola
+    </NavLink>
+    <NavLink
+      to='/productos'
+      activeStyle={NavActive}
+    >
+      Productos
+    </NavLink>
+  </nav>
+)
+
+const App = () => {
+  return (
+    <BrowserRouter>
+      <Navegation />
+      <Route path='/' exact render={Home} />
+      <Route path='/hola' render={Hola} />
+      <Route path='/productos' exact render={Productos} />
+      <Route path='/productos/:categoria/:id?' render={ProductosCategoria} />
+    </BrowserRouter>
+  )
+}
+
+export default App
