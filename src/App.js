@@ -1,76 +1,93 @@
-import React from 'react'
-import { BrowserRouter, Route, NavLink, Link } from 'react-router-dom'
-import './App.css'
+import React, { useState } from "react";
+import "./App.css";
 
-const Hola = () => (
-  <h1>Hola</h1>
-)
-
-const Productos = (props) => (
-  <div>
-    <h1>Productos</h1>
-    <Link to='/productos/gamers'>Gamers</Link>
-    <Link to='/productos/hogar'>Hogar</Link>
-  </div>
-)
-
-const Home = (props) => (
-  <h1>Home</h1>
-)
-
-const ProductosCategoria = ({ match }) => {
-  console.log(match)
-
+export function Todo({ todo, index, completeTodo, removeTodo }) {
   return (
-    <div>
-      <h1>Categoria: { match.params.categoria }</h1>
+    <div
+      className="todo"
+      style={{ textDecoration: todo.isCompleted ? "line-through" : "" }}
+    >
+      {todo.text}
+
+      <div>
+        <button onClick={() => completeTodo(index)}>Complete</button>
+        <button onClick={() => removeTodo(index)}>X</button>
+      </div>
     </div>
-  )
+  );
 }
 
-const navStyles = {
-  display: 'flex',
-  justifyContent: 'space-around'
-}
+function TodoForm({ addTodo }) {
+  const [value, setValue] = useState("");
 
-const NavActive = {
-  color: 'orangered'
-}
+  const handleSubmit = e => {
+    e.preventDefault();
+    if (!value) return;
+    addTodo(value);
+    setValue("");
+  };
 
-const Navegation = () => (
-  <nav style={navStyles}>
-    <NavLink
-      to='/'
-      exact
-      activeStyle={NavActive}
-    >
-      Home
-    </NavLink>
-    <NavLink
-      to='/hola'
-      activeClassName='navActive'
-    >
-      Hola
-    </NavLink>
-    <NavLink
-      to='/productos'
-      activeStyle={NavActive}
-    >
-      Productos
-    </NavLink>
-  </nav>
-)
-
-const App = () => {
   return (
-    <BrowserRouter>
-      <Navegation />
-      <Route path='/' exact render={Home} />
-      <Route path='/hola' render={Hola} />
-      <Route path='/productos' exact render={Productos} />
-      <Route path='/productos/:categoria/:id?' render={ProductosCategoria} />
-    </BrowserRouter>
-  )
+    <form onSubmit={handleSubmit}>
+      <input
+        type="text"
+        className="input"
+        value={value}
+        onChange={e => setValue(e.target.value)}
+      />
+    </form>
+  );
 }
 
-export default App
+function App() {
+  const [todos, setTodos] = useState([
+    {
+      text: "Todo 1",
+      isCompleted: false
+    },
+    {
+      text: "Todo 2",
+      isCompleted: false
+    },
+    {
+      text: "Todo 3",
+      isCompleted: false
+    }
+  ]);
+
+  const addTodo = text => {
+    const newTodos = [{ text }, ...todos];
+    setTodos(newTodos);
+  };
+
+  const completeTodo = index => {
+    const newTodos = [...todos];
+    newTodos[index].isCompleted = true;
+    setTodos(newTodos);
+  };
+
+  const removeTodo = index => {
+    const newTodos = [...todos];
+    newTodos.splice(index, 1);
+    setTodos(newTodos);
+  };
+
+  return (
+    <div className="app">
+      <div className="todo-list">
+        <TodoForm addTodo={addTodo} />
+        {todos.map((todo, index) => (
+          <Todo
+            key={index}
+            index={index}
+            todo={todo}
+            completeTodo={completeTodo}
+            removeTodo={removeTodo}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default App;
